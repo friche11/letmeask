@@ -4,14 +4,26 @@ import googleIconImg from '../assets/images/google-icon.svg'
 import '../styles/auth.scss'
 import { Button } from '../components/Button'
 import { useNavigate } from 'react-router-dom';
+import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { auth } from '../services/firebase'
 
 export function Home(){
     const navigate = useNavigate();
 
-    function navigateToNewRoom(){
-      // Navega para a rota '/rooms/new'
-        navigate('/rooms/new');
+    function handleCreateRoom(){
+        const provider = new GoogleAuthProvider(); // Supondo que você já importou GoogleAuthProvider
+    
+        signInWithPopup(auth, provider) // Use signInWithPopup com o provedor
+            .then((result) => {
+                console.log(result);
+                // Navega para a rota '/rooms/new' apenas após o usuário ter sido autenticado com sucesso
+                navigate('/rooms/new');
+            })
+            .catch((error) => {
+                console.error('Error signing in:', error);
+            });
     }
+
 
     return(
     <div id='page-auth'>
@@ -23,7 +35,7 @@ export function Home(){
         <main>
             <div className='main-content'>
                 <img src={logoImg} alt="Letmeask" />
-                <button onClick={navigateToNewRoom} className='create-room'>
+                <button onClick={handleCreateRoom} className='create-room'>
                     <img src={googleIconImg} alt="Logo do Google" />
                     Crie sua sala com o Google
                 </button>
