@@ -6,22 +6,18 @@ import { Button } from '../components/Button'
 import { useNavigate } from 'react-router-dom';
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { auth } from '../services/firebase'
+import { AuthContext } from '../App'
+import { useContext } from 'react'
 
 export function Home(){
     const navigate = useNavigate();
+    const {user, signInWithGoogle} = useContext(AuthContext);
 
-    function handleCreateRoom(){
-        const provider = new GoogleAuthProvider(); // Supondo que você já importou GoogleAuthProvider
-    
-        signInWithPopup(auth, provider) // Use signInWithPopup com o provedor
-            .then((result) => {
-                console.log(result);
-                // Navega para a rota '/rooms/new' apenas após o usuário ter sido autenticado com sucesso
-                navigate('/rooms/new');
-            })
-            .catch((error) => {
-                console.error('Error signing in:', error);
-            });
+    async function handleCreateRoom(){
+        if(!user){
+            await signInWithGoogle();
+        }
+        navigate('/rooms/new');
     }
 
 
