@@ -5,13 +5,11 @@ import '../styles/auth.scss'
 import { Button } from '../components/Button'
 import { useNavigate } from 'react-router-dom';
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { auth } from '../services/firebase'
-import { AuthContext } from '../App'
-import { useContext } from 'react'
+import { useAuth } from '../hooks/useAuth';
 
 export function Home(){
     const navigate = useNavigate();
-    const {user, signInWithGoogle} = useContext(AuthContext);
+    const {user, signInWithGoogle} = useAuth();
 
     async function handleCreateRoom(){
         if(!user){
