@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
-import { getDatabase } from 'firebase/database';
+import { getDatabase, ref, set, push, child, get } from 'firebase/database';
 
 // Inicialize o Firebase com as configurações
 const firebaseApp = initializeApp({
@@ -23,4 +23,4 @@ const firestore = getFirestore(firebaseApp);
 // Obtenha a instância do serviço Database
 const database = getDatabase(firebaseApp);
 
-export { auth, firebaseApp,firestore, database };
+export { auth, firebaseApp,firestore, database, ref, set, push, child, get };
