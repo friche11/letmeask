@@ -1,38 +1,22 @@
-import { useEffect } from 'react';
+// React
 import { FormEvent, useState } from 'react';
 import { useParams } from 'react-router-dom'
 
+// Styles
+import '../styles/room.scss';
 import logoImg from '../assets/images/logo.svg';
 
+// Components
 import { Button } from '../components/Button';
 import { RoomCode } from '../components/RoomCode';
-import { useAuth } from '../hooks/useAuth';
-import { database, ref, push } from '../services/firebase';
-import { onValue, DataSnapshot } from 'firebase/database';
 import { Question } from '../components/Question';
 
-import '../styles/room.scss';
+// Hooks
+import { useAuth } from '../hooks/useAuth';
+import { useRoom } from '../hooks/useRoom';
 
-type FirebaseQuestions = Record<string, {
-  author: {
-    name: string;
-    avatar: string;
-  }
-  content: string;
-  isAnswered: boolean;
-  isHighlighted: boolean;
-}>
-
-type QuestionType = {
-  id: string;
-  author: {
-    name: string;
-    avatar: string;
-  }
-  content: string;
-  isAnswered: boolean;
-  isHighlighted: boolean;
-}
+// Firebase services
+import { database, ref, push } from '../services/firebase';
 
 type RoomParams = {
   id: string;
@@ -42,35 +26,9 @@ export function Room() {
   const { user } = useAuth();
   const params = useParams<RoomParams>();
   const [newQuestion, setNewQuestion] = useState('');
-  const [questions, setQuestions] = useState<QuestionType[]>([])
-  const [title, setTitle] = useState('');
   const roomId = params.id || '';
+  const { title, questions } = useRoom(roomId);
   
-
-  useEffect(() => {
-    const roomRef = ref(database, `rooms/${roomId}`);
-
-    onValue(roomRef, (snapshot: DataSnapshot) => { // Defina o tipo para snapshot
-        const databaseRoom = snapshot.val(); // Use snapshot.val() para acessar os dados do snapshot
-        if (databaseRoom) {
-          const title = databaseRoom.title ?? '';
-          const questions = databaseRoom.questions ?? {};
-          const firebaseQuestions: FirebaseQuestions = questions;
-          const parsedQuestions = Object.entries(firebaseQuestions).map(([key, value]) => {
-            return {
-              id: key,
-              content: value.content,
-              author: value.author,
-              isHighlighted: value.isHighlighted,
-              isAnswered: value.isAnswered,
-            }
-          });
-          setTitle(title);
-          setQuestions(parsedQuestions);
-        }
-      });
-    }, [roomId]);
-
   async function handleSendQuestion(event: FormEvent) {
     event.preventDefault();
 
