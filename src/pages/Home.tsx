@@ -4,10 +4,10 @@ import googleIconImg from '../assets/images/google-icon.svg'
 import '../styles/auth.scss'
 import { Button } from '../components/Button'
 import { useNavigate } from 'react-router-dom';
-import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+
 import { useAuth } from '../hooks/useAuth';
 import { FormEvent, useState } from 'react'; 
-import {database, ref, child, get} from '../services/firebase'
+import {database, ref, get} from '../services/firebase'
 
 
 export function Home(){
@@ -29,14 +29,20 @@ export function Home(){
           return;
         }
 
-        const roomRef = ref(database);
+        const roomRef = ref(database, `rooms/${roomCode}`);
+
+        const roomSnapshot = await get(roomRef);
+
+        if (!roomSnapshot.exists()) {
+            alert('Sala não encontrada.');
+            return;
+        }
+
+        const roomData = roomSnapshot.val();
         
-        const roomId = await get(child(roomRef,`rooms/${roomCode}`));
-        
-    
-        if (!roomId.exists()) {
-          alert('Room does not exists.');
-          return;
+        if (roomData.endedAt) {
+            alert('Sala já foi encerrada.');
+            return;
         }
     
         navigate(`/rooms/${roomCode}`);
