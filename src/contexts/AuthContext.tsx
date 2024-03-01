@@ -46,22 +46,26 @@ export function AuthContextProvider(props: AuthContextProviderProps) {
 
   async function signInWithGoogle() {
     const provider = new GoogleAuthProvider();
+    
+    try {
+        const result = await signInWithPopup(auth, provider);
 
-    const result = await signInWithPopup(auth, provider);
+        if (result.user) {
+            const { displayName, photoURL, uid } = result.user;
 
-    if (result.user) {
-      const { displayName, photoURL, uid } = result.user
+            if (!displayName || !photoURL) {
+                throw new Error('Missing information from Google Account.');
+            }
 
-      if (!displayName || !photoURL) {
-        throw new Error('Missing information from Google Account.');
-      }
-
-      setUser({
-        id: uid,
-        name: displayName,
-        avatar: photoURL
-      })
-    }
+            setUser({
+                id: uid,
+                name: displayName,
+                avatar: photoURL
+            });
+        }
+    } catch (error) {
+          alert('O popup de autenticação foi fechado. Por favor, tente novamente.');
+  }
   }
   
   return (

@@ -18,8 +18,9 @@ export function Home(){
     async function handleCreateRoom(){
         if(!user){
             await signInWithGoogle();
-        }
+        }else{
         navigate('/rooms/new');
+        }
     }
 
     async function handleJoinRoom(event: FormEvent) {
